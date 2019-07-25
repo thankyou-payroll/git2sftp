@@ -1,9 +1,9 @@
 import { argv } from 'yargs';
 import packageJSON from './package.json';
 
-
 const OPTIONS = {
   SHOW_HELP: !!argv.h,
+  SHOW_VERSION: !!argv.v,
   WORKSPACE: argv.w || argv.workspace,
   SFTP_HOSTNAME: argv.h || argv.hostname,
   SFTP_USER: argv.u || argv.user,
@@ -36,4 +36,12 @@ const SFTP = {
 
 const MAIN_BRANCH = OPTIONS.BRANCH || BRANCH;
 const VERSION = packageJSON.version;
-export { WORKSPACE_PATH, GIT_REPOSITORY, WORKSPACE, SFTP, MAIN_BRANCH, OPTIONS, VERSION };
+export {
+  WORKSPACE_PATH,
+  GIT_REPOSITORY,
+  WORKSPACE,
+  SFTP,
+  MAIN_BRANCH,
+  OPTIONS,
+  VERSION,
+};

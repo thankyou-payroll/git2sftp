@@ -1,5 +1,5 @@
 import { which, exec, cd, ls } from 'shelljs';
-import { WORKSPACE_PATH, MAIN_BRANCH } from './config';
+import { WORKSPACE_PATH, MAIN_BRANCH, VERSION } from './config';
 
 const SHELL_OPTIONS = { silent: true };
 
@@ -79,12 +79,20 @@ const help = () => {
     -b, --branch        Git branch (Default: master)
     -h                  Show Help
     -v                  Show Version
-    `)
+    `);
   process.exit(0);
-}
+};
+
+const version = () => {
+  console.log(`
+git2sftp -> ${VERSION}
+`);
+  process.exit(0);
+};
 
 export {
   help,
+  version,
   checkGit,
   createWorkspace,
   cloneToWorkspace,

@@ -4,8 +4,9 @@
   "main": "src/index.js",
   "license": "MIT",
   "scripts": {
-    "build": "yarn version && nexe index.js -o ./release/git2sftp",
+    "build": "nexe index.js -o ./release/git2sftp",
     "start": "node index.js",
+    "semver": "yarn version",
     "format:staged": "pretty-quick --staged",
     "format": "run-s git:stage format:staged lint",
     "lint": "eslint --fix . --ext .js",
@@ -14,7 +15,7 @@
     "git:push": "git push",
     "git:cz": "git cz",
     "sync": "run-s git:update git:push",
-    "commit": "run-s git:stage format lint git:cz"
+    "commit": "run-s semver git:stage format lint git:cz"
   },
   "dependencies": {
     "awaity": "^1.0.0",

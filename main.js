@@ -9,7 +9,8 @@ import {
   cloneToWorkspace,
   listWorkspaces,
   checkout,
-  help
+  help,
+  version,
 } from './commands';
 import {
   askSelectCommits,
@@ -31,6 +32,7 @@ const processError = (ex, message) => {
 
 (async () => {
   if (OPTIONS.SHOW_HELP) help();
+  if (OPTIONS.SHOW_VERSION) version();
   messages.start({ text: 'Check dependencies' });
   checkGit();
   messages.success();
