@@ -50,7 +50,8 @@ will be skipped.
     -d, --dest          SFTP Remote Destiny
     -r, --repository    Git repository
     -b, --branch        Git branch (Default: master)
-    -h, --help          Show Help
+    -h                  Show Help
+    -v                  Show Version
 ```
 
 ## Development
