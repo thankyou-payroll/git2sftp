@@ -36,22 +36,16 @@ You can use the options to preset the settings. If they are set the question
 will be skipped.
 
 ```
-  CLI tool for deploying code from a Git repository via SFTP in a controlled way
-
-  usage:
-    git2sftp [options]
-
-  options:
-    -w, --workspace     Select Workspace
-    -h, --hostname      SFTP Hostname
-    -u, --user          SFTP User
-    -p, --password      SFTP Password
-    --port              SFTP Port (Default: 22)
-    -d, --dest          SFTP Remote Destiny
-    -r, --repository    Git repository
-    -b, --branch        Git branch (Default: master)
-    -h                  Show Help
-    -v                  Show Version
+-w, --workspace     Select Workspace
+-h, --hostname      SFTP Hostname
+-u, --user          SFTP User
+-p, --password      SFTP Password
+--port              SFTP Port (Default: 22)
+-d, --dest          SFTP Remote Destiny
+-r, --repository    Git repository
+-b, --branch        Git branch (Default: master)
+-h                  Show Help
+-v                  Show Version
 ```
 
 ## Development
@@ -61,6 +55,7 @@ Simply clone the repository and run `yarn start` to run the app.
 ```bash
 > git clone https://github.com/thankyou-payroll/git2sftp.git
 > cd git2sftp
+> yarn
 > yarn start
 ```
 
