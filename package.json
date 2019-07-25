@@ -1,0 +1,42 @@
+{
+  "name": "git2sftp",
+  "version": "1.0.1",
+  "main": "src/index.js",
+  "license": "MIT",
+  "scripts": {
+    "build": "yarn version && nexe index.js -o ./release/git2sftp",
+    "start": "node index.js",
+    "format:staged": "pretty-quick --staged",
+    "format": "run-s git:stage format:staged lint",
+    "lint": "eslint --fix . --ext .js",
+    "git:update": "git pull -r",
+    "git:stage": "git add .",
+    "git:push": "git push",
+    "git:cz": "git cz",
+    "sync": "run-s git:update git:push",
+    "commit": "run-s git:stage format lint git:cz"
+  },
+  "dependencies": {
+    "awaity": "^1.0.0",
+    "dotenv": "^8.0.0",
+    "esm": "^3.2.25",
+    "inquirer": "^6.5.0",
+    "ora": "^3.4.0",
+    "shelljs": "^0.8.3",
+    "ssh2-sftp-client": "^2.5.0",
+    "yargs": "^13.3.0"
+  },
+  "devDependencies": {
+    "babel-eslint": "^10.0.2",
+    "commitizen": "^4.0.3",
+    "cz-conventional-changelog": "^3.0.2",
+    "eslint": "^6.1.0",
+    "eslint-config-prettier": "^6.0.0",
+    "eslint-plugin-babel": "^5.3.0",
+    "eslint-plugin-prettier": "^3.1.0",
+    "nexe": "^3.3.2",
+    "npm-run-all": "^4.1.5",
+    "prettier": "^1.18.2",
+    "pretty-quick": "^1.11.1"
+  }
+}
