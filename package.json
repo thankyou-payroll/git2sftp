@@ -4,7 +4,10 @@
   "main": "src/index.js",
   "license": "MIT",
   "scripts": {
-    "build": "nexe index.js -o ./release/git2sftp",
+    "build:win": "nexe index.js -o ./release/git2sftp.win -t win32",
+    "build:linux": "nexe index.js -o ./release/git2sftp.linux -t linux",
+    "build:mac": "nexe index.js -o ./release/git2sftp.macOS -t macos",
+    "build": "run-p build:*",
     "start": "node index.js",
     "semver": "yarn version",
     "format:staged": "pretty-quick --staged",
