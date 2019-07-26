@@ -1,7 +1,29 @@
 import { which, exec, cd, ls } from 'shelljs';
-import { WORKSPACE_PATH, MAIN_BRANCH, VERSION } from './config';
+import { argv } from 'yargs';
+
+import { WORKSPACE_PATH, BRANCH, VERSION } from './config';
 
 const SHELL_OPTIONS = { silent: true };
+
+const COMMANDS = { rollback: 'rollback' };
+
+const [COMMAND] = argv._;
+
+const OPTIONS = {
+  COMMAND: COMMANDS[COMMAND],
+  SHOW_HELP: !!argv.h,
+  SHOW_VERSION: !!argv.v,
+  WORKSPACE: argv.w || argv.workspace,
+  SFTP_HOSTNAME: argv.h || argv.hostname,
+  SFTP_USER: argv.u || argv.user,
+  SFTP_PASSWORD: argv.p || argv.password,
+  SFTP_PORT: argv.port,
+  SFTP_DEST: argv.d || argv.dest,
+  GIT_REPOSITORY: argv.r || argv.repository,
+  BRANCH: argv.b || argv.branch,
+};
+
+const SELECTED_BRANCH = OPTIONS.BRANCH || BRANCH;
 
 const trimOutput = stdout => stdout.trim();
 const splitLines = output => output.split('\n');
@@ -52,13 +74,13 @@ const getChangedFiles = ({ startHash, endHash }) =>
 const cloneToWorkspace = (repository, name = '') => {
   goToWorkspaceFolder();
   return run(
-    `git clone ${repository} -b ${MAIN_BRANCH} --single-branch ${name}`.trim(),
+    `git clone ${repository} -b ${SELECTED_BRANCH} --single-branch ${name}`.trim(),
   ).then(() => name || repository.match(/^.+\/(.+).git$/)[1]);
 };
 
 const listWorkspaces = () => ls(WORKSPACE_PATH);
 
-const checkout = (hash = MAIN_BRANCH) =>
+const checkout = (hash = SELECTED_BRANCH) =>
   run(`git checkout ${hash}`).then(trimOutput);
 
 const help = () => {
@@ -91,6 +113,8 @@ git2sftp -> ${VERSION}
 };
 
 export {
+  OPTIONS,
+  COMMANDS,
   help,
   version,
   checkGit,

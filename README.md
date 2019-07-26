@@ -6,7 +6,7 @@ CLI tool for deploying code from a Git repository via SFTP in a controlled way
 
 - Git
 
-## How to use it?
+## How to use it
 
 You can simply run it and the tool will guide you.
 
@@ -14,7 +14,16 @@ You can simply run it and the tool will guide you.
 > git2sftp [options]
 ```
 
-#### Environmental Variables
+### Rollback
+
+You can also easily rollback a change to its previous state using the `rollback`
+command.
+
+```bash
+> git2sftp rollback [options]
+```
+
+### Environmental Variables
 
 The environmental variables set the default answers. They can be set using a
 `.env` file.
@@ -30,12 +39,12 @@ SFTP_PORT=
 SFTP_DEST=
 ```
 
-#### Options:
+### Options
 
-You can use the options to preset the settings. If they are set the question
-will be skipped.
+Some of the options to preset the settings. If they are set the question will be
+skipped.
 
-```
+```bash
 -w, --workspace     Select Workspace
 -h, --hostname      SFTP Hostname
 -u, --user          SFTP User

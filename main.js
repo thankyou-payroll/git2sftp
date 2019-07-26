@@ -1,4 +1,5 @@
 import {
+  OPTIONS,
   checkGit,
   goToProjectFolder,
   updateRepository,
@@ -22,7 +23,7 @@ import {
 import messages from './messages';
 import { CONSTANTS, getHash, pipe } from './helpers';
 import { deploy } from './sftp';
-import { WORKSPACE_PATH, OPTIONS } from './config';
+import { WORKSPACE_PATH } from './config';
 
 const processError = (ex, message) => {
   messages.fail(message);
@@ -30,13 +31,17 @@ const processError = (ex, message) => {
   process.exit(1);
 };
 
-(async () => {
-  if (OPTIONS.SHOW_HELP) help();
-  if (OPTIONS.SHOW_VERSION) version();
-  messages.start({ text: 'Check dependencies' });
-  checkGit();
-  messages.success();
-  await createWorkspace();
+const checkDependencies = () => {
+  try {
+    messages.start({ text: 'Check dependencies' });
+    checkGit();
+    messages.success();
+  } catch (ex) {
+    processError(ex, ex.message);
+  }
+};
+
+const setupWorkspace = async () => {
   const workspaces = listWorkspaces();
   let workspace =
     workspaces.length > 0 ? await askWorkspace(workspaces) : CONSTANTS.NEW;
@@ -61,7 +66,6 @@ const processError = (ex, message) => {
       processError(ex, errorMessage);
     }
   }
-
   const emptyTreeHash = await getEmptyTreeHash();
   const commits = await getCommits();
   const firstCommit = commits[commits.length - 1];
@@ -71,16 +75,67 @@ const processError = (ex, message) => {
     startHash: isFirstCommit(hash) ? emptyTreeHash : `${hash}~1`,
     endHash: hash,
   });
+  return {
+    workspace,
+    commits,
+    getFiles: pipe(
+      getHash,
+      getHashFilter,
+      getChangedFiles,
+    ),
+  };
+};
 
-  const getFiles = pipe(
-    getHash,
-    getHashFilter,
-    getChangedFiles,
-  );
+const setup = async () => {
+  await createWorkspace();
+  return await setupWorkspace();
+};
 
+const workflows = {
+  deploy: async ({ filesPerCommit, projectPath, credentials }) => {
+    try {
+      for (const hash in filesPerCommit) {
+        messages.start({ text: `Deploying changes from commit ${hash}` });
+        await checkout(hash);
+        await deploy({
+          projectPath,
+          files: filesPerCommit[hash],
+          ...credentials,
+        });
+        messages.success(`Changes from commit ${hash} deployed`);
+      }
+    } catch (ex) {
+      const errorMessage = `There was a problem deploying the changes. Please check if your your credentials and your destination path are correct.`;
+      processError(ex, errorMessage);
+    }
+  },
+  rollback: async ({ filesPerCommit, projectPath, credentials }) => {
+    try {
+      for (const hash in filesPerCommit) {
+        messages.start({ text: `Rolling back changes from commit ${hash}` });
+        await checkout(`${hash}~1`);
+        await deploy({
+          projectPath,
+          files: filesPerCommit[hash],
+          ...credentials,
+          isRollback: true,
+        });
+        messages.success(`Changes from commit ${hash} rolled back`);
+      }
+    } catch (ex) {
+      const errorMessage = `There was a problem rolling back the changes. Please check if your your credentials and your destination path are correct.`;
+      processError(ex, errorMessage);
+    }
+  },
+};
+
+(async () => {
+  if (OPTIONS.SHOW_HELP) help();
+  if (OPTIONS.SHOW_VERSION) version();
+  checkDependencies();
+  const { workspace, commits, getFiles } = await setup();
   const selectedCommits = await askSelectCommits(commits);
   messages.start({ text: 'Get changed files' });
-
   const filesPerCommit = await Promise.all(
     selectedCommits.map(async commit => ({
       commit,
@@ -88,23 +143,11 @@ const processError = (ex, message) => {
     })),
   );
   messages.success();
-
   const selectedFilesPerCommit = await askWhichFiles(filesPerCommit);
   const credentials = await askSFTPCredentials();
-
-  try {
-    for (const hash in selectedFilesPerCommit) {
-      messages.start({ text: `Upload files from commit ${hash}` });
-      await checkout(hash);
-      await deploy({
-        projectPath: `${WORKSPACE_PATH}/${workspace}`,
-        files: selectedFilesPerCommit[hash],
-        ...credentials,
-      });
-      messages.success(`Uploaded files from commit ${hash}`);
-    }
-  } catch (ex) {
-    const errorMessage = `There was a problem deploying the changes. Please check if your your credentials are correct.`;
-    processError(ex, errorMessage);
-  }
+  workflows[OPTIONS.COMMAND]({
+    credentials,
+    projectPath: `${WORKSPACE_PATH}/${workspace}`,
+    filesPerCommit: selectedFilesPerCommit,
+  });
 })();

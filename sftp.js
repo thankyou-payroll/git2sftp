@@ -3,6 +3,8 @@ import { each } from 'awaity/esm';
 import { CONSTANTS, getDirectory } from './helpers';
 import messages from './messages';
 
+const { CODES, LABELS } = CONSTANTS.GIT_STATUS;
+
 // Constants
 const TYPES = { '-': 'file', d: 'directory', l: 'link' };
 
@@ -20,9 +22,9 @@ const makeFolder = async path => {
   if (shouldCreate) await sftp.mkdir(path, true);
 };
 
-const createFolderStructure = async ({ files, destPath }) => {
+const createFolderStructure = async ({ files, destPath, isRollback }) => {
   const dirs = files
-    .filter(({ status }) => status === 'A')
+    .filter(({ status }) => status === (isRollback ? CODES.DELETE : CODES.ADD))
     .map(({ file }) => getDirectory(file));
   messages.start({ text: 'Create folder structure' });
   try {
@@ -43,18 +45,44 @@ const removeFile = async ({ filePath, destPath }) => {
   if (shouldRemove) await sftp.delete(`${destPath}/${filePath}`);
 };
 
-const processFiles = async ({ files, destPath, projectPath }) => {
+const deployChange = async ({ status, file, destPath, projectPath }) => {
+  switch (status) {
+    case CODES.ADD:
+    case CODES.MODIFY:
+      await uploadFile({ filePath: file, destPath, projectPath });
+      break;
+    case CODES.DELETE:
+      await removeFile({ filePath: file, destPath });
+      break;
+  }
+};
+const rollbackChange = async ({ status, file, destPath, projectPath }) => {
+  switch (status) {
+    case CODES.DELETE:
+    case CODES.MODIFY:
+      await uploadFile({ filePath: file, destPath, projectPath });
+      break;
+    case CODES.ADD:
+      await removeFile({ filePath: file, destPath });
+      break;
+  }
+};
+
+const processFiles = async ({ files, destPath, projectPath, isRollback }) => {
   await each(files, async ({ status, file }) => {
-    messages.start({ text: `${CONSTANTS.STATUS[status]} ${file}` });
     try {
-      switch (status) {
-        case 'A':
-        case 'M':
-          await uploadFile({ filePath: file, destPath, projectPath });
-          break;
-        case 'D':
-          await removeFile({ filePath: file, destPath });
-          break;
+      if (isRollback) {
+        const rollbackStatus =
+          status === CODES.ADD
+            ? CODES.DELETE
+            : status === CODES.DELETE
+            ? CODES.ADD
+            : CODES.MODIFY;
+        messages.start({ text: `${LABELS[rollbackStatus]} ${file}` });
+        await rollbackChange({ status, file, destPath, projectPath });
+      } else {
+        messages.start({ text: `${LABELS[status]} ${file}` });
+        await deployChange({ status, file, destPath, projectPath });
       }
       messages.success();
     } catch (err) {
@@ -73,18 +101,18 @@ const deploy = async ({
   projectPath,
   files,
   hostname,
-  port,
+  port = 22,
   username,
   password,
   destPath = '/app',
+  isRollback,
 }) => {
-  messages.start({ text: 'Deploy' });
-
+  messages.start({ text: isRollback ? 'Rollback' : 'Deploy' });
   try {
     await connect({ hostname, port, username, password });
-    await createFolderStructure({ files, destPath });
-    await processFiles({ files, destPath, projectPath });
-    messages.success('Deployed');
+    await createFolderStructure({ files, destPath, isRollback });
+    await processFiles({ files, destPath, projectPath, isRollback });
+    messages.success(isRollback ? 'Rolled back' : 'Deployed');
   } catch (err) {
     console.error(err);
     messages.fail();

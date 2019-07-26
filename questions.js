@@ -1,6 +1,10 @@
 import inquirer, { Separator } from 'inquirer';
 import { CONSTANTS, getHash } from './helpers';
-import { GIT_REPOSITORY, WORKSPACE, SFTP, OPTIONS } from './config';
+import { OPTIONS } from './commands';
+import { GIT_REPOSITORY, WORKSPACE, SFTP } from './config';
+
+const { LABELS } = CONSTANTS.GIT_STATUS;
+
 const checkEmpty = answer => (answer.length < 1 ? "It can't be empty." : true);
 
 const ask = question =>
@@ -8,21 +12,18 @@ const ask = question =>
     .prompt([{ ...question, name: 'answer' }])
     .then(({ answer }) => answer);
 
-const askWorkspace = async workspaces => {
-  const worskpace =
-    OPTIONS.WORKSPACE ||
-    (await ask({
-      type: 'list',
-      message: 'Select your workspace',
-      default: 'new',
-      choices: [
-        { name: 'New workspace', value: 'new' },
-        new Separator(' = Workspaces = '),
-        ...workspaces.map(workspace => ({ name: workspace })),
-      ],
-    }));
-  return worskpace;
-};
+const askWorkspace = async workspaces =>
+  OPTIONS.WORKSPACE ||
+  (await ask({
+    type: 'list',
+    message: 'Select your workspace',
+    default: 'new',
+    choices: [
+      { name: 'New workspace', value: 'new' },
+      new Separator(' = Workspaces = '),
+      ...workspaces.map(workspace => ({ name: workspace })),
+    ],
+  }));
 
 const askSelectCommits = commits =>
   ask({
@@ -51,7 +52,9 @@ const askGitRepository = async () => {
       default: GIT_REPOSITORY,
       validate: checkEmpty,
     }));
-  const name = OPTIONS.WORKSPACE || (await ask({ message: 'Workspace name:', default: WORKSPACE }));
+  const name =
+    OPTIONS.WORKSPACE ||
+    (await ask({ message: 'Workspace name:', default: WORKSPACE }));
   return { repository, name, branch };
 };
 
@@ -96,7 +99,7 @@ const askWhichFiles = commits =>
       const list = [
         new Separator(` = ${commit} = `),
         ...files.map(({ status, file }) => ({
-          name: `[${CONSTANTS.STATUS[status]}] ${file}`,
+          name: `[${LABELS[status]}] ${file}`,
           value: { commit, file, status },
         })),
       ];

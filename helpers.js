@@ -9,9 +9,16 @@ const getDirectory = pipe(
   pathArray => pathArray.pop() && pathArray.join('/'),
 );
 
+const GIT_STATUS_CODES = { ADD: 'A', MODIFY: 'M', DELETE: 'D' };
+const GIT_STATUS_LABELS = {
+  [GIT_STATUS_CODES.ADD]: 'ADD',
+  [GIT_STATUS_CODES.MODIFY]: 'MODIFY',
+  [GIT_STATUS_CODES.DELETE]: 'DELETE',
+};
+
 const CONSTANTS = {
   NEW: 'new',
-  STATUS: { A: 'ADD', M: 'MODIFY', D: 'DELETE' },
+  GIT_STATUS: { CODES: GIT_STATUS_CODES, LABELS: GIT_STATUS_LABELS },
 };
 
 export { CONSTANTS, pipe, getHash, getFileName, getDirectory };
