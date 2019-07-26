@@ -18,6 +18,8 @@ import {
   askWorkspace,
   askGitRepository,
   askSFTPCredentials,
+  askSelectRemote,
+  askSaveCredentials,
   askWhichFiles,
 } from './questions';
 import messages from './messages';

@@ -58,12 +58,31 @@ const askGitRepository = async () => {
   return { repository, name, branch };
 };
 
+const askSelectRemote = hostnames =>
+  ask({
+    type: 'list',
+    message: 'Select your hostname',
+    default: 'new',
+    choices: [
+      { name: 'New hostname', value: 'new' },
+      new Separator(' = Hostnames = '),
+      ...hostnames.map(hostname => ({ name: hostname })),
+    ],
+  });
+
 const askSFTPCredentials = async () => {
   const hostname =
     OPTIONS.SFTP_HOSTNAME ||
     (await ask({
       message: 'Please, input your SSH Host:',
       default: SFTP.HOSTNAME,
+      validate: checkEmpty,
+    }));
+  const port =
+    OPTIONS.SFTP_PORT ||
+    (await ask({
+      message: 'Please, input your SSH Port:',
+      default: SFTP.PORT,
       validate: checkEmpty,
     }));
   const username =
@@ -88,8 +107,16 @@ const askSFTPCredentials = async () => {
       default: SFTP.DEST,
       validate: checkEmpty,
     }));
-  return { hostname, username, password, destPath };
+  return { hostname, port, username, password, destPath };
 };
+
+const askSaveCredentials = () =>
+  ask({
+    type: 'list',
+    message: 'Do you want to save this credentials?',
+    default: false,
+    choices: [{ name: 'Yes', value: true }, { name: 'No', value: false }],
+  });
 
 const askWhichFiles = commits =>
   ask({
@@ -118,9 +145,11 @@ const askWhichFiles = commits =>
     }, {}),
   );
 export {
+  askSelectRemote,
   askSelectCommits,
   askGitRepository,
   askSFTPCredentials,
+  askSaveCredentials,
   askWorkspace,
   askWhichFiles,
 };
