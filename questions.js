@@ -2,6 +2,7 @@ import inquirer, { Separator } from 'inquirer';
 import { CONSTANTS, getHash } from './helpers';
 import { OPTIONS } from './commands';
 import { GIT_REPOSITORY, WORKSPACE, SFTP } from './config';
+import credentials from './credentials';
 
 const { LABELS } = CONSTANTS.GIT_STATUS;
 
@@ -17,9 +18,9 @@ const askWorkspace = async workspaces =>
   (await ask({
     type: 'list',
     message: 'Select your workspace',
-    default: 'new',
+    default: CONSTANTS.NEW,
     choices: [
-      { name: 'New workspace', value: 'new' },
+      { name: 'New workspace', value: CONSTANTS.NEW },
       new Separator(' = Workspaces = '),
       ...workspaces.map(workspace => ({ name: workspace })),
     ],
@@ -62,11 +63,14 @@ const askSelectRemote = hostnames =>
   ask({
     type: 'list',
     message: 'Select your hostname',
-    default: 'new',
+    default: CONSTANTS.NEW,
     choices: [
-      { name: 'New hostname', value: 'new' },
+      { name: 'New hostname', value: CONSTANTS.NEW },
       new Separator(' = Hostnames = '),
-      ...hostnames.map(hostname => ({ name: hostname })),
+      ...hostnames.map(hostname => ({
+        name: hostname,
+        value: { hostname, ...credentials.get(hostname) },
+      })),
     ],
   });
 

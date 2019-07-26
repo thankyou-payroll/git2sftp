@@ -1,6 +1,6 @@
 .workspace
 .history
-
+.creds
 
 # Created by https://www.gitignore.io/api/git,node,macos,visualstudio
 # Edit at https://www.gitignore.io/?templates=git,node,macos,visualstudio
@@ -488,3 +488,4 @@ healthchecksdb
 MigrationBackup/
 
 # End of https://www.gitignore.io/api/git,node,macos,visualstudio
+

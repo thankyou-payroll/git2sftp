@@ -7,10 +7,12 @@ const SHELL_OPTIONS = { silent: true };
 
 const COMMANDS = { rollback: 'rollback' };
 
+const DEFAULT_COMMAND = 'deploy';
+
 const [COMMAND] = argv._;
 
 const OPTIONS = {
-  COMMAND: COMMANDS[COMMAND],
+  COMMAND: COMMANDS[COMMAND] || DEFAULT_COMMAND,
   SHOW_HELP: !!argv.h,
   SHOW_VERSION: !!argv.v,
   WORKSPACE: argv.w || argv.workspace,

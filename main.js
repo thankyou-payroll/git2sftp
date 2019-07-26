@@ -26,6 +26,7 @@ import messages from './messages';
 import { CONSTANTS, getHash, pipe } from './helpers';
 import { deploy } from './sftp';
 import { WORKSPACE_PATH } from './config';
+import localCredentials from './credentials';
 
 const processError = (ex, message) => {
   messages.fail(message);
@@ -93,6 +94,20 @@ const setup = async () => {
   return await setupWorkspace();
 };
 
+const getCredentials = async () => {
+  let credentials = CONSTANTS.NEW;
+  if (localCredentials.exists()) {
+    const hostnames = localCredentials.list();
+    if (hostnames.length > 0) credentials = await askSelectRemote(hostnames);
+  }
+  if (credentials === CONSTANTS.NEW) {
+    credentials = await askSFTPCredentials();
+    if (await askSaveCredentials()) localCredentials.save(credentials);
+  }
+
+  return credentials;
+};
+
 const workflows = {
   deploy: async ({ filesPerCommit, projectPath, credentials }) => {
     try {
@@ -146,7 +161,9 @@ const workflows = {
   );
   messages.success();
   const selectedFilesPerCommit = await askWhichFiles(filesPerCommit);
-  const credentials = await askSFTPCredentials();
+
+  const credentials = await getCredentials();
+
   workflows[OPTIONS.COMMAND]({
     credentials,
     projectPath: `${WORKSPACE_PATH}/${workspace}`,

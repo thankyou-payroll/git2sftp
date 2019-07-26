@@ -1,17 +1,18 @@
-import secureFiles from './secure-files';
+import secureFile from './secure-file';
 import { resolve } from 'path';
 const CREDENTIALS_PATH = resolve(process.cwd(), '.creds');
 
-const exists = () => secureFiles.exists(CREDENTIALS_PATH);
-const get = () => secureFiles.get(CREDENTIALS_PATH);
+const exists = () => secureFile.exists(CREDENTIALS_PATH);
+const getCredentials = () => secureFile.get(CREDENTIALS_PATH);
+const list = () => Object.keys(getCredentials());
+const get = hostname => {
+  const credentials = getCredentials();
+  return credentials[hostname];
+};
+const save = ({ hostname, port, username, password, destPath }) => {
+  const credentials = exists() ? getCredentials() : {};
+  credentials[hostname] = { port, username, password, destPath };
+  return secureFile.save(CREDENTIALS_PATH, credentials);
+};
 
-const save = ({ hostname, port, username, password, destPath }) =>
-  secureFiles.save(CREDENTIALS_PATH, {
-    hostname,
-    port,
-    username,
-    password,
-    destPath,
-  });
-
-export default { exists, get, save };
+export default { exists, get, save, list };
