@@ -8,7 +8,9 @@ CLI tool for deploying code from a Git repository via SFTP in a controlled way
 
 ## How to use it
 
-You can simply run it and the tool will guide you.
+You can simply
+[download it from here](https://github.com/thankyou-payroll/git2sftp/releases)
+and run it, the tool will guide you through the process.
 
 ```bash
 > git2sftp [options]
@@ -29,14 +31,21 @@ The environmental variables set the default answers. They can be set using a
 `.env` file.
 
 ```bash
+
+# Defaults
+
 WORKSPACE=
-GIT_REPOSITORY=
-BRANCH=
 SFTP_USER=
 SFTP_PASSWORD=
 SFTP_HOSTNAME=
-SFTP_PORT=
-SFTP_DEST=
+SFTP_PORT=22
+SFTP_DEST=/app
+GIT_REPOSITORY=
+BRANCH=master
+ENCRYPTION_KEY=git-to-sftp-big-secret
+ENCRYPTION_ALGORITHM=aes-256-cbc
+ENCRYPTION_IV_LENGTH=16
+ENCRYPTION_PREFIX=Git2SFTP Rules!
 ```
 
 ### Options
@@ -75,3 +84,14 @@ To generate a release using `nexe` just:
 ```bash
 > yarn build
 ```
+
+## Encrypted Credentials
+
+To keep your credentials safe you can specify your personal `ENCRYPTION_KEY` and
+`ENCRYPTION_PREFIX` when running the command
+
+```bash
+> ENCRYPTION_KEY="🔑🗝️" ENCRYPTION_PREFIX="🔥🔥🔥🔥🔥" git2sftp [options]
+```
+
+The file `.creds` will be created the first time you save a credentials.
