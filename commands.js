@@ -1,3 +1,4 @@
+import { mkdirSync, existsSync } from 'fs';
 import { which, exec, cd, ls } from 'shelljs';
 import { argv } from 'yargs';
 
@@ -16,7 +17,7 @@ const OPTIONS = {
   SHOW_HELP: !!argv.h,
   SHOW_VERSION: !!argv.v,
   WORKSPACE: argv.w || argv.workspace,
-  SFTP_HOSTNAME: argv.h || argv.hostname,
+  SFTP_HOSTNAME: argv.H || argv.hostname,
   SFTP_USER: argv.u || argv.user,
   SFTP_PASSWORD: argv.p || argv.password,
   SFTP_PORT: argv.port,
@@ -45,12 +46,8 @@ const checkGit = () => {
   if (!which('git')) throw new Error('Git Not found');
 };
 
-const createWorkspace = async () => {
-  try {
-    await run(`mkdir ${WORKSPACE_PATH}`);
-  } catch (e) {
-    /* Directory already exists */
-  }
+const createWorkspace = () => {
+  if (!existsSync(WORKSPACE_PATH)) mkdirSync(WORKSPACE_PATH);
 };
 
 const goToWorkspaceFolder = () => cd(WORKSPACE_PATH);
@@ -94,7 +91,7 @@ const help = () => {
   
   options:
     -w, --workspace     Select Workspace
-    -h, --hostname      SFTP Hostname
+    -H, --hostname      SFTP Hostname
     -u, --user          SFTP User
     -p, --password      SFTP Password
     --port              SFTP Port (Default: 22)
