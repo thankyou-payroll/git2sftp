@@ -1,7 +1,7 @@
-import Client from 'ssh2-sftp-client';
-import { each } from 'awaity/esm';
-import { CONSTANTS, getDirectory } from './helpers';
-import messages from './messages';
+const Client = require('ssh2-sftp-client');
+const { each } = require('awaity/esm');
+const { CONSTANTS, getDirectory } = require('./helpers');
+const messages = require('./messages');
 
 const { CODES, LABELS } = CONSTANTS.GIT_STATUS;
 
@@ -122,4 +122,4 @@ const deploy = async ({
   }
 };
 
-export { deploy };
+module.exports = { deploy };

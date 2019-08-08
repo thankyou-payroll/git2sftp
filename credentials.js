@@ -1,5 +1,5 @@
-import secureFile from './secure-file';
-import { resolve } from 'path';
+const secureFile = require('./secure-file');
+const { resolve } = require('path');
 const CREDENTIALS_PATH = resolve(process.cwd(), '.creds');
 
 const exists = () => secureFile.exists(CREDENTIALS_PATH);
@@ -15,4 +15,4 @@ const save = ({ hostname, port, username, password, destPath }) => {
   return secureFile.save(CREDENTIALS_PATH, credentials);
 };
 
-export default { exists, get, save, list };
+module.exports = { exists, get, save, list };

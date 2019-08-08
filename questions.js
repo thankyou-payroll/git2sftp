@@ -1,9 +1,10 @@
-import inquirer, { Separator } from 'inquirer';
-import { CONSTANTS, getHash } from './helpers';
-import { OPTIONS } from './commands';
-import { GIT_REPOSITORY, WORKSPACE, SFTP } from './config';
-import credentials from './credentials';
+const inquirer = require('inquirer');
+const { CONSTANTS, getHash } = require('./helpers');
+const { OPTIONS } = require('./commands');
+const { GIT_REPOSITORY, WORKSPACE, SFTP } = require('./config');
+const credentials = require('./credentials');
 
+const { Separator } = inquirer;
 const { LABELS } = CONSTANTS.GIT_STATUS;
 
 const checkEmpty = answer => (answer.length < 1 ? "It can't be empty." : true);
@@ -148,7 +149,7 @@ const askWhichFiles = commits =>
       };
     }, {}),
   );
-export {
+module.exports = {
   askSelectRemote,
   askSelectCommits,
   askGitRepository,

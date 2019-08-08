@@ -1,4 +1,4 @@
-import ora from 'ora';
+const ora = require('ora');
 
 const current = ora();
 
@@ -32,4 +32,4 @@ const end = ({ type, text, symbol, prefixText }) => {
 const success = text => end({ type: 'succeed', text });
 const fail = text => end({ type: 'fail', text });
 
-export default { start, end, success, fail };
+module.exports = { start, end, success, fail };

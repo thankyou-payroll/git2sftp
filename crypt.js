@@ -1,5 +1,5 @@
-import crypto from 'crypto';
-import { ENCRYPTION } from './config';
+const crypto = require('crypto');
+const { ENCRYPTION } = require('./config');
 
 const { PREFIX, KEY, ALGORITHM, IV_LENGTH } = ENCRYPTION;
 
@@ -25,4 +25,4 @@ const decrypt = text => {
   return Buffer.concat([decrypted, decipher.final()]).toString();
 };
 
-export { decrypt, encrypt };
+module.exports = { decrypt, encrypt };

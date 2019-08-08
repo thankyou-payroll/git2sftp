@@ -1,4 +1,4 @@
-import packageJSON from './package.json';
+const packageJSON = require('./package.json');
 
 const {
   WORKSPACE,
@@ -32,7 +32,7 @@ const ENCRYPTION = {
 };
 const VERSION = packageJSON.version;
 
-export {
+module.exports = {
   WORKSPACE_PATH,
   GIT_REPOSITORY,
   WORKSPACE,

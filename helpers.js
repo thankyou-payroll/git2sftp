@@ -21,4 +21,4 @@ const CONSTANTS = {
   GIT_STATUS: { CODES: GIT_STATUS_CODES, LABELS: GIT_STATUS_LABELS },
 };
 
-export { CONSTANTS, pipe, getHash, getFileName, getDirectory };
+module.exports = { CONSTANTS, pipe, getHash, getFileName, getDirectory };

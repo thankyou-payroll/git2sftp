@@ -1,5 +1,5 @@
-import { readFileSync, writeFileSync, existsSync, unlinkSync } from 'fs';
-import { encrypt, decrypt } from './crypt';
+const { readFileSync, writeFileSync, existsSync, unlinkSync } = require('fs');
+const { encrypt, decrypt } = require('./crypt');
 
 const FILE_OPTIONS = { encoding: 'utf-8' };
 
@@ -9,4 +9,4 @@ const save = async (path, data) =>
   writeFileSync(path, encrypt(JSON.stringify(data)), FILE_OPTIONS);
 const remove = path => unlinkSync(path);
 
-export default { exists, get, save, remove };
+module.exports = { exists, get, save, remove };

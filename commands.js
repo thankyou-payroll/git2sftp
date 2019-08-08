@@ -1,8 +1,8 @@
-import { mkdirSync, existsSync } from 'fs';
-import { which, exec, cd, ls } from 'shelljs';
-import { argv } from 'yargs';
+const { mkdirSync, existsSync } = require('fs');
+const { which, exec, cd, ls } = require('shelljs');
+const { argv } = require('yargs');
 
-import { WORKSPACE_PATH, BRANCH, VERSION } from './config';
+const { WORKSPACE_PATH, BRANCH, VERSION } = require('./config');
 
 const SHELL_OPTIONS = { silent: true };
 
@@ -111,7 +111,7 @@ git2sftp -> ${VERSION}
   process.exit(0);
 };
 
-export {
+module.exports = {
   OPTIONS,
   COMMANDS,
   help,
