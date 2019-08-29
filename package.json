@@ -22,6 +22,11 @@
     "sync": "run-s git:update git:push",
     "commit": "run-s semver git:stage format lint git:cz"
   },
+  "config": {
+    "commitizen": {
+      "path": "cz-conventional-changelog"
+    }
+  },
   "dependencies": {
     "awaity": "^1.0.0",
     "dotenv": "^8.1.0",
