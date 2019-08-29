@@ -1,6 +1,6 @@
 {
   "name": "git2sftp",
-  "version": "1.2.2",
+  "version": "1.2.3",
   "main": "src/index.js",
   "license": "MIT",
   "scripts": {
@@ -24,20 +24,20 @@
   },
   "dependencies": {
     "awaity": "^1.0.0",
-    "dotenv": "^8.0.0",
+    "dotenv": "^8.1.0",
     "esm": "^3.2.25",
-    "inquirer": "^6.5.1",
+    "inquirer": "^7.0.0",
     "ora": "^3.4.0",
     "shelljs": "^0.8.3",
-    "ssh2-sftp-client": "^2.5.0",
-    "yargs": "^13.3.0"
+    "ssh2-sftp-client": "^4.0.3",
+    "yargs": "^14.0.0"
   },
   "devDependencies": {
-    "babel-eslint": "^10.0.2",
+    "babel-eslint": "^10.0.3",
     "commitizen": "^4.0.3",
     "cz-conventional-changelog": "^3.0.2",
-    "eslint": "^6.1.0",
-    "eslint-config-prettier": "^6.0.0",
+    "eslint": "^6.2.2",
+    "eslint-config-prettier": "^6.1.0",
     "eslint-plugin-babel": "^5.3.0",
     "eslint-plugin-prettier": "^3.1.0",
     "nexe": "^3.3.2",
